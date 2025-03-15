@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"strconv"
 	"strings"
 
@@ -60,13 +59,13 @@ func main() {
 			formatArg := strings.Split(arg, "=")[1]
 			if (formatArg[0] == '"' && formatArg[len(formatArg)-1] == '"') {
 				formatArg = formatArg[1 : len(formatArg)-1]
-				parsedFormat, err := parseFormat(formatArg)
-				if (err != nil) {
-					fmt.Println(err)
-					os.Exit(1)
-				}
-				format = parsedFormat
 			}
+			parsedFormat, err := parseFormat(formatArg)
+			if (err != nil) {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			format = parsedFormat
 			argsLen--
 		}
 		
@@ -86,14 +85,23 @@ func main() {
 	if (argsLen == 1) {
 		command = strings.ToLower(args[0])
 	}
+	if (command == "help" ){
+		showHelp()
+		os.Exit(0)
+	}
+
+	dotEnv, _ := readEnv(envFile)
+
+	kumaInstance, err := kuma.New(dotEnv[CONFIG_BASE_URL], dotEnv[CONFIG_API_KEY])
+	if err != nil {
+		panic(err)
+	}
 
 	switch(command) {
 		case "update":
-			run(envFile)
-		case "help":
-			showHelp()
+			run(kumaInstance)
 		case "open":
-			open(envFile)
+			kumaInstance.Open()
 		default:
 			fmt.Println("Invalid argument.")
 			fmt.Println("Use '" + COMMAND + " help' for more information")
@@ -120,28 +128,7 @@ func showHelp() {
 	fmt.Println("  " + COMMAND + " --help")
 }
 
-func open(envFile string) {
-	dotEnv, _ := readEnv(envFile)	
-	url := dotEnv[CONFIG_BASE_URL]
-	if (url == "") {
-		fmt.Println("Base URL not found in .env file")
-		os.Exit(1)
-	}
-	err := exec.Command("open", url + "/dashboard").Run()
-	if (err != nil) {
-		fmt.Println("Failed to open URL:")
-		os.Exit(1)
-	}
-}
-
-func run(envFile string) {
-	dotEnv, _ := readEnv(envFile)
-
-	kumaInstance, err := kuma.New(dotEnv[CONFIG_BASE_URL], dotEnv[CONFIG_API_KEY])
-	if err != nil {
-		panic(err)
-	}
-
+func run(kumaInstance *kuma.Kuma) {
 	metrics, monitors, err := kumaInstance.GetMetrics()
 	if err != nil {
 		panic(err)

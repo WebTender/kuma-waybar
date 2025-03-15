@@ -1,9 +1,12 @@
 # Uptime Kuma for Waybar
 
-This is a simple script to display the uptime of a system in a Waybar custom module.
+This is a simple program to display the uptime of a system in a Waybar custom module.
 You can run it in the cli to see the status overview of the system.
+You can also output detailed status in json format.
 
 It displays a green checkmark if all monitors are up, or a red, yellow and green numbers for the number of monitors that are down, pending and up respectively.
+
+Zero dependencies, this script only uses the go standard library.
 
 ## Usage with Waybar
 
@@ -41,13 +44,18 @@ See the [Waybar repo](https://github.com/Alexays/Waybar) for more information on
 ```bash
 git clone https://github.com/WebTender/kuma-waybar.git
 cd kuma-waybar
+
+# Builds and installs at /usr/local/bin/kuma-waybar
 ./install.sh
+
+# Optionally remove the source code
 cd ../
 rm -rf kuma-waybar
 
+# Now you can run the binary
 kuma-waybar --help
 ```
-Tip: You can review the [install.sh](install.sh) script before running it.
+Tip: For security you can review the [install.sh](install.sh) script before running it.
 
 ## Configuration
 

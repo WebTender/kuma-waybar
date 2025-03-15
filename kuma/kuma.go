@@ -3,8 +3,11 @@ package kuma
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"sync"
@@ -166,6 +169,15 @@ func (kuma *Kuma) GetMetrics() ([]Metric, []*Monitor, error) {
 	kuma.mutex.Unlock()
 
 	return newMetrics, newMonitors, nil
+}
+
+// Opens the dashboard in the default browser
+func (kuma *Kuma) Open() {
+	err := exec.Command("open", kuma.baseUrl + "/dashboard").Run()
+	if (err != nil) {
+		fmt.Println("Failed to open URL:")
+		os.Exit(1)
+	}
 }
 
 func parseMetric(key string, keyValueMapString string, value string) Metric {
