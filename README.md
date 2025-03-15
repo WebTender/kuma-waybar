@@ -39,6 +39,12 @@ See the [Waybar repo](https://github.com/Alexays/Waybar) for more information on
 
 ## Installation
 
+### From Releases
+
+`wget https://github.com/WebTender/kuma-waybar/releases/download/v1.0.1/kuma-waybar-linux_x86_64 -O ~/.local/bin/kuma-waybar`
+> Check [Releases](https://github.com/WebTender/kuma-waybar/releases) to substitute the latest download link
+
+### Install from Source
 ```bash
 git clone https://github.com/WebTender/kuma-waybar.git
 cd kuma-waybar
