@@ -1,12 +1,10 @@
-# Uptime Kuma for Waybar
+# Uptime Kuma widget for Waybar
 
-This is a simple program to display the uptime of a system in a Waybar custom module.
-You can run it in the cli to see the status overview of the system.
-You can also output detailed status in json format.
+This is a simple program to display a summary of [Uptime Kuma](https://github.com/louislam/uptime-kuma) monitors' status in a Waybar module.
+It displays a green checkmark if all monitors are up, or the number of monitors Up, Pending or Down in green, yellow and red numbers respectively.
 
-It displays a green checkmark if all monitors are up, or a red, yellow and green numbers for the number of monitors that are down, pending and up respectively.
-
-Zero dependencies, this script only uses the go standard library.
+You can also use this program to output detailed monitor statuses in json format via the cli with `--format=json`.
+Zero dependencies, this program only uses the go standard library.
 
 ## Usage with Waybar
 
@@ -16,9 +14,9 @@ Zero dependencies, this script only uses the go standard library.
 In your `waybar/config` file, add the following:
 ```json
 "custom/kuma-waybar": {
-    "exec": "kuma-waybar --format=waybar --env=$HOME/.config/waybar/kuma-waybar.env",
+    "exec": "kuma-waybar --format=waybar --env=$HOME/.config/waybar/.kuma-waybar.env",
     "interval": 60,
-    "on-click": "kuma-waybar open --env=$HOME/.config/waybar/kuma-waybar.env",
+    "on-click": "kuma-waybar open --env=$HOME/.config/waybar/.kuma-waybar.env",
     "max-length": 40,
     "format": "🐻 {}"
 },
@@ -66,7 +64,8 @@ UPTIME_KUMA_BASE_URL=https://your-uptime-kuma-instance.com
 ```
 
 You can also provide the `--env` argument to the script to point to the `.env` file.
-E.g. `kuma-waybar --env=$HOME/.config/waybar/kuma-waybar.env`
+
+E.g. `kuma-waybar --env=$HOME/.config/waybar/.kuma-waybar.env`
 
 **Where to get the API Key?**
 
@@ -100,6 +99,8 @@ Tip: You can pipe into `jq` to parse the json output.
 MIT License
 
 This script was written for our own purposes. Feel free to use without any restrictions. There is no warranty or guarantee of any kind.
+
+## Contributing
 
 PRs will be considered.
 
