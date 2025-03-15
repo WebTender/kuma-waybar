@@ -69,13 +69,14 @@ You can also provide the `--env` argument to the script to point to the `.env` f
 E.g. `kuma-waybar --env=$HOME/.config/waybar/kuma-waybar.env`
 
 **Where to get the API Key?**
+
 You can get your API from `/settings/api-keys` of your Uptime Kuma instance or under Settings -> API Keys in Uptime Kuma.
 
 Supports a few `--format` options:
-`--format=waybar` - Outputs the uptime summary in a format that Waybar can display.
-`--format=ansi` - (default) Outputs the uptime summary in a format that is easy to read in the cli.
-`--format=json` - Outputs the uptime details in a json format.
-`--format=jsonp` - Outputs the uptime details in a json format with indentation.
+- `--format=waybar` - Outputs the uptime summary in a format that Waybar can display.
+- `--format=ansi` - (default) Outputs the uptime summary in a format that is easy to read in the cli.
+- `--format=json` - Outputs the uptime details in a json format.
+- `--format=jsonp` - Outputs the uptime details in a json format with indentation.
 
 ## CLI Usage
 ```bash
@@ -103,5 +104,5 @@ This script was written for our own purposes. Feel free to use without any restr
 
 PRs will be considered.
 
-If you find use of this project, consider a BTC donation:
+If you make use of this project, consider a BTC donation:
 `BC1QZ3QQLZ5LK89DRKAU5N4HG47R9GFEMLYAKUCAMD`
