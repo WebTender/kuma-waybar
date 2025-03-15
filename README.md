@@ -1,6 +1,7 @@
 # Uptime Kuma widget for Waybar
 
-This is a simple program to display a summary of [Uptime Kuma](https://github.com/louislam/uptime-kuma) monitors' status in a Waybar module.
+This is a simple program to display a summary of [Uptime Kuma](https://github.com/louislam/uptime-kuma) status in a Waybar module.
+
 It displays a green checkmark if all monitors are up, or the number of monitors Up, Pending or Down in green, yellow and red numbers respectively.
 
 You can also use this program to output detailed monitor statuses in json format via the cli with `--format=json`.
@@ -9,7 +10,6 @@ Zero dependencies, this program only uses the go standard library.
 ## Usage with Waybar
 
 ![](docs/assets/waybar.png)
-
 
 In your `waybar/config` file, add the following:
 ```json

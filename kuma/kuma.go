@@ -96,6 +96,7 @@ func New(baseUrl string, apiKey string) (*Kuma, error) {
 	if (apiKey == "") {
 		return nil, errors.New("apiKey is required")
 	}
+	baseUrl = strings.TrimRight(baseUrl, "/")
 
 	req, err := http.NewRequest("GET", baseUrl + "/metrics", nil)
 	if (err != nil) {
