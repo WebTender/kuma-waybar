@@ -11,17 +11,20 @@ const DEFAULT_ENV_FILE = string(".env")
 //
 // filePath: The path to the .env file. Use "" to use the default .env file
 func readEnv(filePath string) (map[string]string, error) {
-	dotenv := map[string]string{}
-
 	if filePath == "" {
 		filePath = DEFAULT_ENV_FILE
 	}
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
-		return dotenv, err
+		return map[string]string{}, err
 	}
 
-	lines := strings.Split(string(fileContents), "\n")
+	return parseDotEnv(string(fileContents))
+}
+
+func parseDotEnv(fileContents string) (map[string]string, error) {
+	dotenv := map[string]string{}
+	lines := strings.Split(fileContents, "\n")
 	for _, line := range lines {
 		if line == "" {
 			continue

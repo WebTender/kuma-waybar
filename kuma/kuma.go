@@ -1,7 +1,6 @@
 package kuma
 
 import (
-	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -10,101 +9,16 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
 
-type Kuma struct {
-	baseUrl string
-	apiKey string
-	req *http.Request
-
-	mutex sync.Mutex
-	currentMetrics *[]Metric
-	currentMonitors *[]*Monitor
-	LastUpdated int64
-}
-
-type MonitorStatus uint8
-const (
-	Down MonitorStatus = iota
-	Up
-	Pending
-	Maintenance 
-)
-func ParseMonitorStatus(value string) (MonitorStatus, error) {
-	num, err := strconv.ParseUint(value, 10, 8)
-	if err != nil {
-		return Pending, err
-	}
-
-	status := MonitorStatus(num)
-	if status < Down || status > Maintenance {
-		return Pending, errors.New("invalid MonitorStatus value")
-	}
-
-	return status, nil
-}
-
-type MonitorType string
-const (
-	HTTP MonitorType = "http"
-	TCP MonitorType = "port"
-	PUSH MonitorType = "push"
-	GROUP MonitorType = "group"
-	PING MonitorType = "ping"
-)
-
-func ParseMonitorType(value string) MonitorType {
-	switch value {
-	case "http":
-		return HTTP
-	case "port":
-		return TCP
-	case "push":
-		return PUSH
-	case "group":
-		return GROUP
-	case "ping":
-		return PING
-	default:
-		println("WARN Unknown monitor type: " + value)
-		return ""
-	}
-}
-
-type Metric struct {
-	Key string
-	Value string
-	Labels map[string]string
-}
-
-type Monitor struct {
-	Status MonitorStatus
-	Type MonitorType
-	Name string
-	Url string
-	Hostname string
-	Port uint16
-	ResponseTime uint64
-}
-
-func New(baseUrl string, apiKey string) (*Kuma, error) {
-	if (baseUrl == "") {
-		return nil, errors.New("baseUrl is required")
-	}
-	if (apiKey == "") {
-		return nil, errors.New("apiKey is required")
-	}
-	baseUrl = strings.TrimRight(baseUrl, "/")
-
-	req, err := http.NewRequest("GET", baseUrl + "/metrics", nil)
+// Opens the dashboard in the default browser
+func (kuma *Kuma) Open() {
+	err := exec.Command("open", kuma.baseUrl + "/dashboard").Run()
 	if (err != nil) {
-		return nil, err
+		fmt.Println("Failed to open URL:")
+		os.Exit(1)
 	}
-	req.Header.Add("Authorization", "Basic " + base64.StdEncoding.EncodeToString([]byte(":" + apiKey)))
-
-	return &Kuma{baseUrl: baseUrl, apiKey: apiKey, req: req}, nil
 }
 
 func (kuma *Kuma) GetMetrics() ([]Metric, []*Monitor, error) {
@@ -115,13 +29,20 @@ func (kuma *Kuma) GetMetrics() ([]Metric, []*Monitor, error) {
 	if (resp.StatusCode != 200) {
 		return nil, nil, errors.New("failed to get metrics: " + resp.Status)
 	}
+	time := time.Now().Unix()
 	
 	body, err := io.ReadAll(resp.Body)
 	if (err != nil) {
 		return nil, nil, err
 	}
 	
-	lines := strings.Split(string(body), "\n")
+	metrics, monitors := parseBody(string(body))
+	kuma.LastUpdated = time
+	return metrics, monitors, nil
+}
+
+func parseBody(body string) ([]Metric, []*Monitor) {
+	lines := strings.Split(body, "\n")
 
 	newMetrics := []Metric{}
 	newMonitors := []*Monitor{}
@@ -163,23 +84,9 @@ func (kuma *Kuma) GetMetrics() ([]Metric, []*Monitor, error) {
 		}
 	}
 
-	kuma.mutex.Lock()
-	kuma.LastUpdated = time.Now().Unix()
-	kuma.currentMetrics = &newMetrics
-	kuma.currentMonitors = &newMonitors
-	kuma.mutex.Unlock()
-
-	return newMetrics, newMonitors, nil
+	return newMetrics, newMonitors
 }
 
-// Opens the dashboard in the default browser
-func (kuma *Kuma) Open() {
-	err := exec.Command("open", kuma.baseUrl + "/dashboard").Run()
-	if (err != nil) {
-		fmt.Println("Failed to open URL:")
-		os.Exit(1)
-	}
-}
 
 func parseMetric(key string, keyValueMapString string, value string) Metric {
 	labels := map[string]string{}
@@ -206,8 +113,6 @@ func parseMetric(key string, keyValueMapString string, value string) Metric {
 	}
 }
 
-var ErrorNotAMonitor = errors.New("metric is not a monitor")
-
 func matchOrNewMonitorFromMetric(metric *Metric, monitors *[]*Monitor) (*Monitor, bool) {
 	name := metric.Labels["monitor_name"]
 	if name == "" {
@@ -228,8 +133,7 @@ func matchOrNewMonitorFromMetric(metric *Metric, monitors *[]*Monitor) (*Monitor
 }
 
 func newMonitorFromMetric(metric *Metric) (Monitor, error) {
-	status := Pending
-	
+	status := Paused
 	port, _ := strconv.ParseUint(metric.Labels["monitor_port"], 10, 16)
 
 	var monitor = Monitor{

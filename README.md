@@ -44,7 +44,9 @@ git clone https://github.com/WebTender/kuma-waybar.git
 cd kuma-waybar
 
 # Builds and installs at /usr/local/bin/kuma-waybar
-./install.sh
+make install
+# or
+sudo make install
 
 # Optionally remove the source code
 cd ../
@@ -53,7 +55,7 @@ rm -rf kuma-waybar
 # Now you can run the binary
 kuma-waybar --help
 ```
-Tip: For security you can review the [install.sh](install.sh) script before running it.
+Tip: For security you can review the [install make script](./Makefile) before running it.
 
 ## Configuration
 
@@ -93,6 +95,14 @@ See also [Full JSON Output](#full-json-output) for more detailed monitor status.
 kuma-waybar --format=json > kuma-status.json
 ```
 Tip: You can pipe into `jq` to parse the json output.
+
+## Unit Tests
+
+```bash`
+make test
+# or
+go test ./..
+```
 
 ## License
 
