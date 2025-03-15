@@ -98,7 +98,7 @@ Tip: You can pipe into `jq` to parse the json output.
 
 ## Unit Tests
 
-```bash`
+```bash
 make test
 # or
 go test ./..
