@@ -89,13 +89,11 @@ kuma-waybar
 See also [Full JSON Output](#full-json-output) for more detailed monitor status.
 
 ## Full JSON Output
-`kuma-waybar --format=json > kuma-status.json`
 
 ```bash
 kuma-waybar --format=json > kuma-status.json
 ```
 Tip: You can pipe into `jq` to parse the json output.
-
 
 ## License
 
