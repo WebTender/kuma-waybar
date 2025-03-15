@@ -73,6 +73,7 @@ E.g. `kuma-waybar --env=$HOME/.config/waybar/kuma-waybar.env`
 You can get your API from `/settings/api-keys` of your Uptime Kuma instance or under Settings -> API Keys in Uptime Kuma.
 
 Supports a few `--format` options:
+- `--format=plain` - Outputs the uptime summary in no color formatting.
 - `--format=waybar` - Outputs the uptime summary in a format that Waybar can display.
 - `--format=ansi` - (default) Outputs the uptime summary in a format that is easy to read in the cli.
 - `--format=json` - Outputs the uptime details in a json format.
