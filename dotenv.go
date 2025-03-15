@@ -8,7 +8,7 @@ import (
 const DEFAULT_ENV_FILE = string(".env")
 
 // readEnv reads a .env file and returns a map of the key-value pairs
-// 
+//
 // filePath: The path to the .env file. Use "" to use the default .env file
 func readEnv(filePath string) (map[string]string, error) {
 	dotenv := map[string]string{}

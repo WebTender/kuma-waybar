@@ -14,15 +14,17 @@ import (
 const CONFIG_API_KEY = "UPTIME_KUMA_API_KEY"
 const CONFIG_BASE_URL = "UPTIME_KUMA_BASE_URL"
 const COMMAND = "kuma-waybar"
+
 var format = ANSI
 
 type Format int
+
 const (
-	PLAIN Format = 0
-	ANSI Format = 1
+	PLAIN  Format = 0
+	ANSI   Format = 1
 	WAYBAR Format = 2
-	JSON Format = 3
-	JSONP Format = 4
+	JSON   Format = 3
+	JSONP  Format = 4
 )
 
 func parseFormat(format string) (Format, error) {
@@ -49,7 +51,7 @@ func main() {
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "--env=") {
 			envFile = strings.Split(arg, "=")[1]
-			if (envFile[0] == '"' && envFile[len(envFile)-1] == '"') {
+			if envFile[0] == '"' && envFile[len(envFile)-1] == '"' {
 				envFile = envFile[1 : len(envFile)-1]
 			}
 			argsLen--
@@ -57,35 +59,35 @@ func main() {
 
 		if strings.HasPrefix(arg, "--format=") {
 			formatArg := strings.Split(arg, "=")[1]
-			if (formatArg[0] == '"' && formatArg[len(formatArg)-1] == '"') {
+			if formatArg[0] == '"' && formatArg[len(formatArg)-1] == '"' {
 				formatArg = formatArg[1 : len(formatArg)-1]
 			}
 			parsedFormat, err := parseFormat(formatArg)
-			if (err != nil) {
+			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 			format = parsedFormat
 			argsLen--
 		}
-		
+
 		if arg == "--help" {
 			showHelp()
 			os.Exit(0)
 		}
 	}
 
-	if (argsLen > 1) {
+	if argsLen > 1 {
 		fmt.Println("Usage: " + COMMAND + " [command] [--env=path]")
 		fmt.Println("Use '" + COMMAND + " help' for more information")
 		os.Exit(1)
 	}
 
 	command := "update"
-	if (argsLen == 1) {
+	if argsLen == 1 {
 		command = strings.ToLower(args[0])
 	}
-	if (command == "help" ){
+	if command == "help" {
 		showHelp()
 		os.Exit(0)
 	}
@@ -97,15 +99,15 @@ func main() {
 		panic(err)
 	}
 
-	switch(command) {
-		case "update":
-			run(kumaInstance)
-		case "open":
-			kumaInstance.Open()
-		default:
-			fmt.Println("Invalid argument.")
-			fmt.Println("Use '" + COMMAND + " help' for more information")
-			os.Exit(1)
+	switch command {
+	case "update":
+		run(kumaInstance)
+	case "open":
+		kumaInstance.Open()
+	default:
+		fmt.Println("Invalid argument.")
+		fmt.Println("Use '" + COMMAND + " help' for more information")
+		os.Exit(1)
 	}
 }
 
@@ -134,11 +136,11 @@ func run(kumaInstance *kuma.Kuma) {
 		panic(err)
 	}
 
-	if (format == JSON) {
+	if format == JSON {
 		jsonStr, err := json.Marshal(map[string]interface{}{
 			"monitors": monitors,
-			"metrics": metrics,
-			"time": kumaInstance.LastUpdated,
+			"metrics":  metrics,
+			"time":     kumaInstance.LastUpdated,
 		})
 		if err != nil {
 			panic(err)
@@ -146,12 +148,12 @@ func run(kumaInstance *kuma.Kuma) {
 		fmt.Println(string(jsonStr))
 		return
 	}
-	
-	if (format == JSONP) {
+
+	if format == JSONP {
 		jsonStr, err := json.MarshalIndent(map[string]interface{}{
 			"monitors": monitors,
-			"metrics": metrics,
-			"time": kumaInstance.LastUpdated,
+			"metrics":  metrics,
+			"time":     kumaInstance.LastUpdated,
 		}, "", "  ")
 		if err != nil {
 			panic(err)
@@ -165,38 +167,39 @@ func run(kumaInstance *kuma.Kuma) {
 	var countRed uint64 = 0
 
 	for _, monitor := range monitors {
-		if (monitor.Status == kuma.Up) {
+		if monitor.Status == kuma.Up {
 			countGreen++
-		} else if (monitor.Status == kuma.Pending) {
+		} else if monitor.Status == kuma.Pending {
 			countYellow++
-		} else if (monitor.Status == kuma.Down) {
+		} else if monitor.Status == kuma.Down {
 			countRed++
 		}
 	}
 
-	if (countGreen > 0 && countYellow == 0 && countRed == 0) {
+	if countGreen > 0 && countYellow == 0 && countRed == 0 {
 		// check mark
 		fmt.Println(formatCounter("✓", Green))
-		return;
+		return
 	}
 
 	out := ""
-	if (countGreen > 0) {
+	if countGreen > 0 {
 		out += formatCounter(strconv.FormatUint(countGreen, 10), Green) + " "
 	}
-	if (countYellow > 0) {
+	if countYellow > 0 {
 		out += formatCounter(strconv.FormatUint(countYellow, 10), Yellow) + " "
 	}
-	if (countRed > 0) {
+	if countRed > 0 {
 		out += formatCounter(strconv.FormatUint(countRed, 10), Red) + " "
 	}
 	fmt.Println(out)
 }
 
 type Color int
+
 const (
-	Red Color = 1
-	Green Color = 2
+	Red    Color = 1
+	Green  Color = 2
 	Yellow Color = 3
 )
 
@@ -225,10 +228,10 @@ func (c Color) ansi() string {
 }
 
 func formatCounter(str string, color Color) string {
-	if (format == PLAIN) {
+	if format == PLAIN {
 		return str
 	}
-	if (format == ANSI) {
+	if format == ANSI {
 		return "\033[38;5;" + color.ansi() + "m" + str + "\033[0m"
 	}
 	return "<span foreground=\"" + color.hex() + "\">" + str + "</span>"
