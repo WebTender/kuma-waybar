@@ -12,20 +12,22 @@ var ErrorNotAMonitor = errors.New("metric is not a monitor")
 
 type Kuma struct {
 	baseUrl string
-	apiKey string
-	req *http.Request
+	apiKey  string
+	req     *http.Request
 
 	LastUpdated int64
 }
 
 type MonitorStatus uint8
+
 const (
 	Down MonitorStatus = iota
 	Up
 	Pending
-	Maintenance 
+	Maintenance
 	Paused
 )
+
 func ParseMonitorStatus(value string) (MonitorStatus, error) {
 	num, err := strconv.ParseUint(value, 10, 8)
 	if err != nil {
@@ -41,12 +43,13 @@ func ParseMonitorStatus(value string) (MonitorStatus, error) {
 }
 
 type MonitorType string
+
 const (
-	HTTP MonitorType = "http"
-	TCP MonitorType = "port"
-	PUSH MonitorType = "push"
+	HTTP  MonitorType = "http"
+	TCP   MonitorType = "port"
+	PUSH  MonitorType = "push"
 	GROUP MonitorType = "group"
-	PING MonitorType = "ping"
+	PING  MonitorType = "ping"
 )
 
 func ParseMonitorType(value string) MonitorType {
@@ -68,35 +71,41 @@ func ParseMonitorType(value string) MonitorType {
 }
 
 type Metric struct {
-	Key string
-	Value string
+	Key    string
+	Value  string
 	Labels map[string]string
 }
 
 type Monitor struct {
-	Status MonitorStatus
-	Type MonitorType
-	Name string
-	Url string
-	Hostname string
-	Port uint16
+	Status       MonitorStatus
+	Type         MonitorType
+	Name         string
+	Url          string
+	Hostname     string
+	Port         uint16
 	ResponseTime uint64
 }
 
 func New(baseUrl string, apiKey string) (*Kuma, error) {
-	if (baseUrl == "") {
+	if baseUrl == "" {
 		return nil, errors.New("baseUrl is required")
 	}
-	if (apiKey == "") {
+	if apiKey == "" {
 		return nil, errors.New("apiKey is required")
 	}
 	baseUrl = strings.TrimRight(baseUrl, "/")
 
-	req, err := http.NewRequest("GET", baseUrl + "/metrics", nil)
-	if (err != nil) {
+	req, err := http.NewRequest("GET", baseUrl+"/metrics", nil)
+	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Authorization", "Basic " + base64.StdEncoding.EncodeToString([]byte(":" + apiKey)))
+	req.Header.Add("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(":"+apiKey)))
 
 	return &Kuma{baseUrl: baseUrl, apiKey: apiKey, req: req}, nil
+}
+
+// Cleans Monitor name. In rare cases, Uptime Kuma will return a monitor name with a backslash at the beginning
+func cleanMonitorName(name string) string {
+	name = strings.Trim(name, "\\")
+	return strings.TrimSpace(name)
 }

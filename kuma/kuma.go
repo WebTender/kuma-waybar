@@ -14,8 +14,8 @@ import (
 
 // Opens the dashboard in the default browser
 func (kuma *Kuma) Open() {
-	err := exec.Command("open", kuma.baseUrl + "/dashboard").Run()
-	if (err != nil) {
+	err := exec.Command("open", kuma.baseUrl+"/dashboard").Run()
+	if err != nil {
 		fmt.Println("Failed to open URL:")
 		os.Exit(1)
 	}
@@ -23,19 +23,19 @@ func (kuma *Kuma) Open() {
 
 func (kuma *Kuma) GetMetrics() ([]Metric, []*Monitor, error) {
 	resp, err := http.DefaultClient.Do(kuma.req)
-	if (err != nil) {
+	if err != nil {
 		return nil, nil, err
 	}
-	if (resp.StatusCode != 200) {
+	if resp.StatusCode != 200 {
 		return nil, nil, errors.New("failed to get metrics: " + resp.Status)
 	}
 	time := time.Now().Unix()
-	
+
 	body, err := io.ReadAll(resp.Body)
-	if (err != nil) {
+	if err != nil {
 		return nil, nil, err
 	}
-	
+
 	metrics, monitors := parseBody(string(body))
 	kuma.LastUpdated = time
 	return metrics, monitors, nil
@@ -48,29 +48,29 @@ func parseBody(body string) ([]Metric, []*Monitor) {
 	newMonitors := []*Monitor{}
 
 	for _, line := range lines {
-		if (line == "") {
+		if line == "" {
 			continue
 		}
 
 		parts := strings.Split(line, "{")
-		if (len(parts) == 1) {
+		if len(parts) == 1 {
 			parts2 := strings.Split(line, " ")
-			if (len(parts2) != 2) {
+			if len(parts2) != 2 {
 				continue
 			}
 			key := strings.TrimSpace(parts2[0])
 			value := strings.TrimSpace(parts2[1])
 			newMetric := parseMetric(key, "", value)
 			newMetrics = append(newMetrics, newMetric)
-			continue;
+			continue
 		}
-		if (len(parts) != 2) {
+		if len(parts) != 2 {
 			continue
 		}
 		key := strings.TrimSpace(parts[0])
 
 		parts = strings.Split(parts[1], "}")
-		if (len(parts) != 2) {
+		if len(parts) != 2 {
 			continue
 		}
 		mapStr := strings.TrimSpace(parts[0])
@@ -78,8 +78,8 @@ func parseBody(body string) ([]Metric, []*Monitor) {
 		newMetric := parseMetric(key, mapStr, value)
 		newMetrics = append(newMetrics, newMetric)
 
-		newMonitor, isNew := matchOrNewMonitorFromMetric(&newMetric,&newMonitors)
-		if (isNew) {
+		newMonitor, isNew := matchOrNewMonitorFromMetric(&newMetric, &newMonitors)
+		if isNew {
 			newMonitors = append(newMonitors, newMonitor)
 		}
 	}
@@ -87,21 +87,20 @@ func parseBody(body string) ([]Metric, []*Monitor) {
 	return newMetrics, newMonitors
 }
 
-
 func parseMetric(key string, keyValueMapString string, value string) Metric {
 	labels := map[string]string{}
-	if (keyValueMapString != "") {
+	if keyValueMapString != "" {
 		mapParts := strings.Split(keyValueMapString, ",")
 		for _, mapPart := range mapParts {
 			mapPart = strings.TrimSpace(mapPart)
 			mapPartParts := strings.Split(mapPart, "=")
-			if (len(mapPartParts) != 2) {
+			if len(mapPartParts) != 2 {
 				continue
 			}
 			mapKey := strings.TrimSpace(mapPartParts[0])
 			mapValue := strings.TrimSpace(mapPartParts[1])
-			if (mapValue[0] == '"' && mapValue[len(mapValue) - 1] == '"') {
-				mapValue = mapValue[1:len(mapValue) - 1]
+			if mapValue[0] == '"' && mapValue[len(mapValue)-1] == '"' {
+				mapValue = mapValue[1 : len(mapValue)-1]
 			}
 			labels[mapKey] = mapValue
 		}
@@ -118,14 +117,15 @@ func matchOrNewMonitorFromMetric(metric *Metric, monitors *[]*Monitor) (*Monitor
 	if name == "" {
 		return nil, false
 	}
+	name = cleanMonitorName(name)
 	for _, monitor := range *monitors {
-		if (monitor.Name == name) {
+		if monitor.Name == name {
 			applyMetricValue(metric, monitor)
 			return monitor, false
 		}
 	}
 	monitor, err := newMonitorFromMetric(metric)
-	if (err != nil) {
+	if err != nil {
 		return nil, false
 	}
 
@@ -137,12 +137,12 @@ func newMonitorFromMetric(metric *Metric) (Monitor, error) {
 	port, _ := strconv.ParseUint(metric.Labels["monitor_port"], 10, 16)
 
 	var monitor = Monitor{
-		Name: metric.Labels["monitor_name"],
-		Status: status,
-		Type: ParseMonitorType(metric.Labels["monitor_type"]),
-		Port: uint16(port),
+		Name:     cleanMonitorName(metric.Labels["monitor_name"]),
+		Status:   status,
+		Type:     ParseMonitorType(metric.Labels["monitor_type"]),
+		Port:     uint16(port),
 		Hostname: metric.Labels["monitor_hostname"],
-		Url: metric.Labels["monitor_url"],
+		Url:      metric.Labels["monitor_url"],
 	}
 
 	applyMetricValue(metric, &monitor)
@@ -151,16 +151,16 @@ func newMonitorFromMetric(metric *Metric) (Monitor, error) {
 }
 
 func applyMetricValue(metric *Metric, monitor *Monitor) {
-	switch(metric.Key) {
-		case "monitor_status":
-			status, err := ParseMonitorStatus(metric.Value)
-			if (err == nil) {
-				monitor.Status = status
-			}
-		case "monitor_response_time":
-			time, err := strconv.ParseUint(metric.Value, 10, 64)
-			if (err == nil) {
-				monitor.ResponseTime = time
-			}
+	switch metric.Key {
+	case "monitor_status":
+		status, err := ParseMonitorStatus(metric.Value)
+		if err == nil {
+			monitor.Status = status
+		}
+	case "monitor_response_time":
+		time, err := strconv.ParseUint(metric.Value, 10, 64)
+		if err == nil {
+			monitor.ResponseTime = time
+		}
 	}
 }
