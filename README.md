@@ -11,7 +11,7 @@ Zero dependencies, this program only uses the go standard library.
 
 ![](docs/assets/waybar.png)
 
-In your `waybar/config` file, add the following:
+In your `waybar/config` file, add the following:/
 ```json
 "custom/kuma-waybar": {
     "exec": "kuma-waybar --format=waybar --env=$HOME/.config/waybar/.kuma-waybar.env",
@@ -41,8 +41,13 @@ See the [Waybar repo](https://github.com/Alexays/Waybar) for more information on
 
 ### From Releases
 
-`wget https://github.com/WebTender/kuma-waybar/releases/download/v1.0.1/kuma-waybar-linux_x86_64 -O ~/.local/bin/kuma-waybar`
+```bash
+wget https://github.com/WebTender/kuma-waybar/releases/download/v1.0.1/kuma-waybar-linux_x86_64 -O ~/.local/bin/kuma-waybar`
+chmod +x ~/.local/bin/kuma-waybar
+sudo cp /home/brandon/.local/bin/kuma-waybar /usr/local/bin
+```
 > Check [Releases](https://github.com/WebTender/kuma-waybar/releases) to substitute the latest download link
+> Assumes `~/.local/bin/` is in your $PATH
 
 ### Install from Source
 ```bash
