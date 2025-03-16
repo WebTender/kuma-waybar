@@ -4,7 +4,7 @@ BINARY_NAME := kuma-waybar
 
 build:
 	@echo "Building $(BINARY_NAME)..."
-	go build -o $(BINARY_NAME) .
+	go build -ldflags="-s -w" -o $(BINARY_NAME) .
 
 test:
 	@echo "Running tests..."
