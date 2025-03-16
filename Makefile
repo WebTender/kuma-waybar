@@ -10,6 +10,10 @@ test:
 	@echo "Running tests..."
 	go test ./...
 
+fmt:
+	@echo "Formatting code..."
+	go fmt ./...
+
 install: build
 	@# Check for the existence of ~/.config/waybar
 	@if [ ! -d "$$HOME/.config/waybar" ]; then \

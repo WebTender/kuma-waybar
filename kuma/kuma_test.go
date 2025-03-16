@@ -15,28 +15,28 @@ monitor_response_time{monitor_name="My Website",monitor_type="http",monitor_url=
 monitor_status{monitor_name="My Website",monitor_type="http",monitor_url="https://mywebsite.com"} 1
 monitor_status{monitor_name="My Website",monitor_type="http",monitor_url="https://mywebsite.com"} 0
 `)
-		if (len(metrics) != 6) {
+		if len(metrics) != 6 {
 			// Maybe they should by the key prefix
 			t.Errorf("metrics are not de-duplicated %v", len(metrics))
 		}
 
-		if (len(monitors) != 1) {
+		if len(monitors) != 1 {
 			t.Errorf("Error: %v", monitors)
 		}
 
-		if (monitors[0].Name != "My Website") {
+		if monitors[0].Name != "My Website" {
 			t.Errorf("Error: %v", monitors[0].Name)
 		}
 
-		if (monitors[0].Type != "http") {
+		if monitors[0].Type != "http" {
 			t.Errorf("Error: %v", monitors[0].Type)
 		}
 
-		if (monitors[0].Url != "https://mywebsite.com") {
+		if monitors[0].Url != "https://mywebsite.com" {
 			t.Errorf("Error: %v", monitors[0].Url)
 		}
 
-		if (monitors[0].Status != 0) {
+		if monitors[0].Status != 0 {
 			t.Errorf("Error: %v should be the last status", monitors[0].Status)
 		}
 	})
@@ -49,15 +49,15 @@ monitor_cert_is_valid{monitor_name="My Website",monitor_type="http",monitor_url=
 monitor_response_time{monitor_name="My Website",monitor_type="http",monitor_url="https://mywebsite.com"} 2.07
 `)
 
-		if (len(metrics) != 3) {
+		if len(metrics) != 3 {
 			t.Errorf("metrics are not de-duplicated %v", len(metrics))
 		}
 
-		if (len(monitors) != 1) {
+		if len(monitors) != 1 {
 			t.Fatalf("Error: %v", monitors)
 		}
 
-		if (monitors[0].Status != Paused) {
+		if monitors[0].Status != Paused {
 			t.Errorf("Error: Assumes status should default to paused %v", monitors[0].Status)
 		}
 	})
