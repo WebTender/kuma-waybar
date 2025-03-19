@@ -56,8 +56,6 @@ cd kuma-waybar
 
 # Builds and installs at /usr/local/bin/kuma-waybar
 make install
-# or
-sudo make install
 
 # Optionally remove the source code
 cd ../
@@ -70,15 +68,15 @@ Tip: For security you can review the [install make script](./Makefile) before ru
 
 ## Configuration
 
-Provide a local `.env` in the working directory with the following content:
+Global configuration can be set in `~/.kuma-waybar.env`:
 ```env
 UPTIME_KUMA_API_KEY=your-api-key
 UPTIME_KUMA_BASE_URL=https://your-uptime-kuma-instance.com
 ```
 
-You can also provide the `--env` argument to the script to point to the `.env` file.
-
-E.g. `kuma-waybar --env=$HOME/.config/waybar/.kuma-waybar.env`
+> You may also provide a local `.env` in the working directory
+> You can also provide the `--env` argument to the script to point to the `.env` file.
+> E.g. `kuma-waybar --env=$HOME/.config/waybar/.kuma-waybar.env`
 
 **Where to get the API Key?**
 
@@ -99,6 +97,16 @@ kuma-waybar
 ![](docs/assets/partial-down.png)
 
 See also [Full JSON Output](#full-json-output) for more detailed monitor status.
+
+You may want an alias for CLI usage, you could add the following to your `.bashrc` or `.zshrc`:
+```bash
+alias kuma='kuma-waybar'
+```
+Then simply:
+```bash
+kuma
+kuma list
+```
 
 ## Full JSON Output
 
