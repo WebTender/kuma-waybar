@@ -68,7 +68,7 @@ Tip: For security you can review the [install make script](./Makefile) before ru
 
 ## Configuration
 
-Global configuration can be set in `~/.kuma-waybar.env`:
+Default configuration can be set in `~/.kuma-waybar.env`:
 ```env
 UPTIME_KUMA_API_KEY=your-api-key
 UPTIME_KUMA_BASE_URL=https://your-uptime-kuma-instance.com
