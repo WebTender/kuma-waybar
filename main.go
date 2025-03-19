@@ -56,9 +56,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	command := "update"
+	command := "status"
 	if argsLen == 1 {
-		command = strings.ToLower(args[0])
+		for _, arg := range args {
+			if !strings.HasPrefix(arg, "--") {
+				command = strings.ToLower(arg)
+			}
+		}
 	}
 	if command == "help" {
 		showHelp()
@@ -73,7 +77,9 @@ func main() {
 	}
 
 	switch command {
-	case "update":
+	case "list":
+		handleList(kumaInstance)
+	case "status":
 		run(kumaInstance)
 	case "open":
 		kumaInstance.Open()
@@ -84,12 +90,42 @@ func main() {
 	}
 }
 
+func handleList(kumaInstance *kuma.Kuma) error {
+	_, monitors, err := kumaInstance.GetMetrics()
+
+	if err != nil {
+		println("Unable to get monitors")
+		panic(err)
+	}
+
+	for _, monitor := range monitors {
+		if monitor.Status == kuma.Up {
+			fmt.Printf("✅ %s - %s\n", monitor.Name, monitor.Type)
+		}
+	}
+
+	for _, monitor := range monitors {
+		if monitor.Status == kuma.Pending {
+			fmt.Printf("⚠️ %s - %s\n", monitor.Name, monitor.Type)
+		}
+	}
+
+	for _, monitor := range monitors {
+		if monitor.Status == kuma.Down {
+			fmt.Printf("❌ %s - %s\n", monitor.Name, monitor.Type)
+		}
+	}
+
+	return nil
+}
+
 func showHelp() {
 	fmt.Println("Usage: " + COMMAND + " [command] [options]")
 	fmt.Println("\nCommands:")
 	fmt.Println("  help   # Display this help message")
 	fmt.Println("  open   # open the Kuma dashboard in your default browser")
-	fmt.Println("  update # (default) display a summary of the monitors")
+	fmt.Println("  status # (default) display a summary of the monitors")
+	fmt.Println("  list   # list all monitors with their status")
 	fmt.Println("\nOptions:")
 	fmt.Println("  --env=path                            # specify the path to the .env file")
 	fmt.Println("  --format=ansi|plain|waybar|json|jsonp # specify the output format")

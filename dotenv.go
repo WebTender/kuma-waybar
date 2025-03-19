@@ -5,15 +5,26 @@ import (
 	"strings"
 )
 
-const DEFAULT_ENV_FILE = string(".env")
+var DEFAULT_ENV_FILES = []string{".env", "~/.kuma-waybar.env"}
 
 // readEnv reads a .env file and returns a map of the key-value pairs
 //
 // filePath: The path to the .env file. Use "" to use the default .env file
 func readEnv(filePath string) (map[string]string, error) {
 	if filePath == "" {
-		filePath = DEFAULT_ENV_FILE
+		for _, file := range DEFAULT_ENV_FILES {
+			if strings.HasPrefix(file, "~") {
+				file = strings.Replace(file, "~", os.Getenv("HOME"), 1)
+			}
+			dotenv, err := readEnv(file)
+			if err == nil {
+				return dotenv, nil
+			}
+		}
+
+		return map[string]string{}, nil
 	}
+
 	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
 		return map[string]string{}, err
