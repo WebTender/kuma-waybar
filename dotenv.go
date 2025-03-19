@@ -13,7 +13,7 @@ var DEFAULT_ENV_FILES = []string{".env", "~/.kuma-waybar.env"}
 func readEnv(filePath string) (map[string]string, error) {
 	if filePath == "" {
 		for _, file := range DEFAULT_ENV_FILES {
-			if (strings.HasPrefix(file, "~")) {
+			if strings.HasPrefix(file, "~") {
 				file = strings.Replace(file, "~", os.Getenv("HOME"), 1)
 			}
 			dotenv, err := readEnv(file)

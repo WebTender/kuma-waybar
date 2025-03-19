@@ -59,8 +59,8 @@ func main() {
 	command := "status"
 	if argsLen == 1 {
 		for _, arg := range args {
-			if ! strings.HasPrefix(arg, "--") {
-		command = strings.ToLower(arg)
+			if !strings.HasPrefix(arg, "--") {
+				command = strings.ToLower(arg)
 			}
 		}
 	}
