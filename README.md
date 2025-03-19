@@ -125,7 +125,9 @@ go test ./..
 
 ## Uptime Kuma Supported Version
 
-This project is tested with both v1 and v2 beta of [Uptime Kuma](https://github.com/louislam/uptime-kuma):
+This project is tested with both v1 and v2 beta of [Uptime Kuma](https://github.com/louislam/uptime-kuma)
+
+Tested versions:
 - [1.23.16](https://github.com/louislam/uptime-kuma/releases/tag/1.23.16)
 - [2.0.0-beta.1](https://github.com/louislam/uptime-kuma/releases/tag/2.0.0-beta.1)
 
