@@ -11,7 +11,7 @@ Zero dependencies, this program only uses the go standard library.
 
 ![](docs/assets/waybar.png)
 
-In your `waybar/config` file, add the following:/
+In your `waybar/config` file, add the following:
 ```json
 "custom/kuma-waybar": {
     "exec": "kuma-waybar --format=waybar --env=$HOME/.config/waybar/.kuma-waybar.env",
@@ -21,6 +21,8 @@ In your `waybar/config` file, add the following:/
     "format": "🐻 {}"
 },
 ```
+
+Note: The default format is ANSI for the CLI, specify --format=waybar in the `exec` command.
 
 Clicking on the module will open the Uptime Kuma dashboard in your default browser.
 Interval is in seconds, so it will update automatically every 60 seconds.
