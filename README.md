@@ -123,7 +123,7 @@ make test
 go test ./..
 ```
 
-## Uptume Kuma Supported Version
+## Uptime Kuma Supported Version
 
 This project is tested with both v1 and v2 beta of [Uptime Kuma](https://github.com/louislam/uptime-kuma):
 - [1.23.16](https://github.com/louislam/uptime-kuma/releases/tag/1.23.16)
