@@ -144,4 +144,4 @@ This script was written for our own purposes. Feel free to use without any restr
 PRs will be considered.
 
 If you make use of this project, consider a BTC donation:
-`BC1QZ3QQLZ5LK89DRKAU5N4HG47R9GFEMLYAKUCAMD`
+`bc1qrhmcg9236gfjx5zpzea0delnp3jefduhhf790z`
