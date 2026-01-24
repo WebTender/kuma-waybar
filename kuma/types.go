@@ -50,6 +50,8 @@ const (
 	PUSH  MonitorType = "push"
 	GROUP MonitorType = "group"
 	PING  MonitorType = "ping"
+	KEYWORD   MonitorType = "keyword"
+	DNS   MonitorType = "dns"
 )
 
 func ParseMonitorType(value string) MonitorType {
@@ -64,6 +66,10 @@ func ParseMonitorType(value string) MonitorType {
 		return GROUP
 	case "ping":
 		return PING
+	case "keyword":
+		return KEYWORD
+	case "dns":
+		return DNS
 	default:
 		println("WARN Unknown monitor type: " + value)
 		return ""
