@@ -35,5 +35,5 @@ install: build
 	@echo "        \"format\": \"Kuma {}\","
 	@echo "    },"
 	@echo ""
-	@echo "Please add your UPTIME_KUMA_API_KEY & UPTIME_KUMA_BASE_URL to $$HOME/.config/waybar/scripts/kuma-waybar.env"
-	@echo "Optionally use --env=./second.env to allow for multiple Uptime Kuma"
+	@echo "Put UPTIME_KUMA_API_KEY and UPTIME_KUMA_BASE_URL in the file passed to --env."
+	@echo "The --env value can be any file, so use different .env files for different configurations."
