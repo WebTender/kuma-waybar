@@ -14,9 +14,16 @@ import (
 
 // Opens the dashboard in the default browser
 func (kuma *Kuma) Open() {
-	err := exec.Command("open", kuma.baseUrl+"/dashboard").Run()
+	url := kuma.baseUrl + "/dashboard"
+	opener := "xdg-open"
+
+	if _, err := exec.LookPath("open"); err == nil {
+		opener = "open"
+	}
+
+	err := exec.Command(opener, url).Run()
 	if err != nil {
-		fmt.Println("Failed to open URL:")
+		fmt.Println("Failed to open URL:", err)
 		os.Exit(1)
 	}
 }
