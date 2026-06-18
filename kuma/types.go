@@ -45,13 +45,13 @@ func ParseMonitorStatus(value string) (MonitorStatus, error) {
 type MonitorType string
 
 const (
-	HTTP  MonitorType = "http"
-	TCP   MonitorType = "port"
-	PUSH  MonitorType = "push"
-	GROUP MonitorType = "group"
-	PING  MonitorType = "ping"
-	KEYWORD   MonitorType = "keyword"
-	DNS   MonitorType = "dns"
+	HTTP    MonitorType = "http"
+	TCP     MonitorType = "port"
+	PUSH    MonitorType = "push"
+	GROUP   MonitorType = "group"
+	PING    MonitorType = "ping"
+	KEYWORD MonitorType = "keyword"
+	DNS     MonitorType = "dns"
 )
 
 func ParseMonitorType(value string) MonitorType {
